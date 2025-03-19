@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-import httpx
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,8 +16,8 @@ conversation_history = []
 
 def get_ai_response(user_message):
     # Initialize the client with the API key from environment variable
-    http_client = httpx.Client(proxies=None)
-    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'), http_client=http_client)
+
+    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
     
     # If conversation history is empty, add the system message
     if not conversation_history:
