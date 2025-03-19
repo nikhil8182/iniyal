@@ -66,7 +66,8 @@ def clear_memory():
 
 def get_conversation_history():
     """Get the current conversation history"""
-    return conversation_history 
+    # Return all messages except system messages
+    return [msg for msg in conversation_history if msg['role'] != 'system']
 
-x = get_ai_response("Tell me about Onwords Smart Homes")
-print(x)
+# x = get_ai_response("Tell me about Onwords Smart Homes")
+# print(x)
