@@ -387,4 +387,48 @@ button:disabled {
         padding: 0.7rem 1rem;
         font-size: 0.8rem;
     }
+}
+
+.brand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+}
+
+.brand-text h1 {
+    font-size: 2.5rem;
+    color: var(--primary-dark);
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.brand-text p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.brand-text .subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+/* Remove the old logo styles */
+.brand-logo {
+    display: none;
+}
+
+.highlight-on {
+    color: #ff4d4d;
+    font-weight: 600;
 } 
