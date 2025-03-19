@@ -24,6 +24,7 @@ A modern Flask-based chat application that integrates with OpenAI's GPT-3.5-turb
 ### Prerequisites
 - Python 3.8 or higher
 - pip (Python package manager)
+- Node.js 16 or higher (for frontend development)
 
 ### Installation Steps
 1. Clone the repository:
@@ -32,31 +33,61 @@ A modern Flask-based chat application that integrates with OpenAI's GPT-3.5-turb
    cd iniyal
    ```
 
-2. Create and activate a virtual environment (recommended):
+2. Set up the backend:
    ```bash
+   # Create and activate virtual environment
    python -m venv venv
    source venv/bin/activate  # On Windows, use: venv\Scripts\activate
-   ```
 
-3. Install the required packages:
-   ```bash
+   # Install Python dependencies
    pip install -r requirements.txt
+
+   # Set up environment variables
+   cp .env.example .env  # Create .env file from example
+   # Edit .env with your OpenAI API key
    ```
 
-4. Set up environment variables:
-   - Create a `.env` file in the root directory
-   - Add your OpenAI API key:
-     ```
-     OPENAI_API_KEY=your_api_key_here
-     ```
-   - Make sure `.env` is in your `.gitignore` file (it should be by default)
-
-5. Run the application:
+3. Set up the frontend:
    ```bash
-   python app.py
+   cd frontend
+   npm install
    ```
 
-The application will start on port 5003 in debug mode.
+4. Run the application:
+   ```bash
+   # Terminal 1 - Backend
+   cd ..  # Go back to root directory
+   python app.py
+
+   # Terminal 2 - Frontend
+   cd frontend
+   npm run dev
+   ```
+
+The backend will start on port 5003, and the frontend development server will start on port 5173.
+
+## Deployment
+
+### Backend Deployment
+The backend can be deployed to any Python-compatible hosting service (e.g., Heroku, DigitalOcean, AWS). Make sure to:
+1. Set up the required environment variables
+2. Configure CORS settings to allow requests from your frontend domain
+3. Use a production-grade WSGI server (e.g., Gunicorn)
+
+### Frontend Deployment (Netlify)
+1. Push your code to GitHub
+2. Connect your repository to Netlify
+3. Configure build settings:
+   - Build command: `cd frontend && npm install && npm run build`
+   - Publish directory: `frontend/dist`
+4. Set up environment variables in Netlify:
+   - `VITE_API_URL`: Your backend API URL
+
+### Netlify Configuration
+The project includes a `netlify.toml` file that configures:
+- Build settings for the frontend
+- API redirects to your backend service
+- SPA routing support
 
 ## Project Structure
 ```
@@ -65,22 +96,34 @@ iniyal/
 ├── key.py             # API key management
 ├── requirements.txt   # Python dependencies
 ├── .env              # Environment variables (not in git)
-├── static/           # Static files (CSS, JS)
-├── templates/        # HTML templates
-└── chat_history.db   # SQLite database for chat history
+├── frontend/         # Frontend React application
+│   ├── src/         # Source files
+│   ├── dist/        # Build output
+│   ├── package.json # Frontend dependencies
+│   └── vite.config.js # Vite configuration
+├── static/          # Static files (CSS, JS)
+├── templates/       # HTML templates
+└── chat_history.db  # SQLite database for chat history
 ```
 
 ## Dependencies
+### Backend
 - Flask - Web framework
 - OpenAI Python Library - AI integration
 - python-dotenv - Environment variable management
 - SQLite3 - Database storage (Python standard library)
+
+### Frontend
+- React - UI framework
+- Vite - Build tool
+- Axios - HTTP client
 
 ## Security Considerations
 - API keys are stored in environment variables, not in the code
 - `.env` file is excluded from version control
 - Sensitive data is not exposed in the frontend
 - Chat history is stored locally
+- CORS is configured to restrict API access
 
 ## Contributing
 1. Fork the repository
@@ -95,4 +138,5 @@ This project is open source and available under the MIT License.
 ## Notes
 - The application uses OpenAI's GPT-3.5-turbo model for chat and streaming responses
 - Chat history is saved both to a JSON file and a SQLite database for redundancy
-- Make sure to keep your `.env` file secure and never commit it to version control 
+- Make sure to keep your `.env` file secure and never commit it to version control
+- For production deployment, consider using a proper database instead of SQLite 
