@@ -6,7 +6,7 @@ An AI-powered web application for Onwords Smart Homes that helps customers with 
 
 **Current Version: v0.1**
 
-### What's New in v0.1
+### What's New in v0.1.3
 - Web-based chat interface with modern UI/UX
 - Real-time conversation with AI assistant
 - Conversation history management

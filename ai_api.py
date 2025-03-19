@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -15,6 +16,7 @@ conversation_history = []
 
 def get_ai_response(user_message):
     # Initialize the client with the API key from environment variable
+
     client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
     
     # If conversation history is empty, add the system message
@@ -66,7 +68,8 @@ def clear_memory():
 
 def get_conversation_history():
     """Get the current conversation history"""
-    return conversation_history 
+    # Return all messages except system messages
+    return [msg for msg in conversation_history if msg['role'] != 'system']
 
-x = get_ai_response("Tell me about Onwords Smart Homes")
-print(x)
+# x = get_ai_response("Tell me about Onwords Smart Homes")
+# print(x)

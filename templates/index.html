@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onwords Smart Homes AI Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -21,12 +22,11 @@
 
             <div class="chat-input-container">
                 <div class="input-wrapper">
-                    <input type="text" id="userInput" placeholder="Type your message here..." autocomplete="off">
-                    <button id="sendButton">Send</button>
+                    <input type="text" id="userInput" placeholder="Ask me anything about smart homes..." autocomplete="off">
+                    <button id="sendButton"><i class="ri-send-plane-fill"></i></button>
                 </div>
                 <div class="commands">
-                    <button class="command-btn" onclick="clearChat()">Clear Chat</button>
-                    <button class="command-btn" onclick="loadHistory()">Show History</button>
+                    <button class="command-btn" onclick="clearChat()"><i class="ri-delete-bin-line"></i> Clear Chat</button>
                 </div>
             </div>
         </div>
