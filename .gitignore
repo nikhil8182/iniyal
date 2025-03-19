@@ -1,5 +1,7 @@
 # Environment variables
 .env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
@@ -33,4 +35,13 @@ env/
 .vscode/
 *.swp
 *.swo
-.DS_Store 
+.cursor/
+
+# Logs
+*.log
+logs/
+log/
+
+# OS
+.DS_Store
+Thumbs.db 
