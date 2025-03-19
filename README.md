@@ -5,7 +5,7 @@ A modern Flask-based chat application that integrates with OpenAI's GPT-3.5-turb
 ## Features
 - Modern, responsive web interface
 - Real-time chat with AI using OpenAI's GPT-3.5-turbo model
-- Chat history persistence (both JSON and SQLite storage)
+- In-memory chat history storage
 - Streaming responses for better user experience
 - Secure API key management using environment variables
 - RESTful API endpoints for chat functionality
@@ -26,7 +26,7 @@ A modern Flask-based chat application that integrates with OpenAI's GPT-3.5-turb
 - pip (Python package manager)
 - Node.js 16 or higher (for frontend development)
 
-### Installation Steps
+### Local Development Setup
 1. Clone the repository:
    ```bash
    git clone https://github.com/nikhil8182/iniyal.git
@@ -68,26 +68,47 @@ The backend will start on port 5003, and the frontend development server will st
 
 ## Deployment
 
-### Backend Deployment
-The backend can be deployed to any Python-compatible hosting service (e.g., Heroku, DigitalOcean, AWS). Make sure to:
-1. Set up the required environment variables
-2. Configure CORS settings to allow requests from your frontend domain
-3. Use a production-grade WSGI server (e.g., Gunicorn)
+### Backend Deployment (Render)
+1. Push your code to GitHub
+2. Go to [Render Dashboard](https://dashboard.render.com/)
+3. Click "New +" and select "Web Service"
+4. Connect your GitHub repository
+5. Configure the service:
+   - Name: `iniyal-backend`
+   - Environment: `Python`
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn app:app`
+   - Plan: Free
+
+6. Add these environment variables in Render:
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   FLASK_ENV=production
+   FLASK_DEBUG=0
+   ```
+
+7. Click "Create Web Service"
 
 ### Frontend Deployment (Netlify)
 1. Push your code to GitHub
-2. Connect your repository to Netlify
-3. Configure build settings:
+2. Go to [Netlify Dashboard](https://app.netlify.com/)
+3. Click "Add new site" > "Import an existing project"
+4. Connect your GitHub repository
+5. Configure build settings:
    - Build command: `cd frontend && npm install && npm run build`
    - Publish directory: `frontend/dist`
-4. Set up environment variables in Netlify:
-   - `VITE_API_URL`: Your backend API URL
+6. Add environment variables:
+   - `VITE_API_URL`: Your Render backend URL
 
-### Netlify Configuration
-The project includes a `netlify.toml` file that configures:
-- Build settings for the frontend
-- API redirects to your backend service
-- SPA routing support
+### Important Notes for Deployment
+- The backend uses in-memory storage for chat history, which means history will be cleared when the server restarts
+- Make sure to set up CORS properly if your frontend and backend are on different domains
+- Keep your API keys secure and never commit them to version control
+- The free tier of Render has some limitations:
+  - 512 MB RAM
+  - Shared CPU
+  - 750 hours of runtime per month
+  - Service may sleep after 15 minutes of inactivity
 
 ## Project Structure
 ```
@@ -102,8 +123,7 @@ iniyal/
 │   ├── package.json # Frontend dependencies
 │   └── vite.config.js # Vite configuration
 ├── static/          # Static files (CSS, JS)
-├── templates/       # HTML templates
-└── chat_history.db  # SQLite database for chat history
+└── templates/       # HTML templates
 ```
 
 ## Dependencies
@@ -111,7 +131,8 @@ iniyal/
 - Flask - Web framework
 - OpenAI Python Library - AI integration
 - python-dotenv - Environment variable management
-- SQLite3 - Database storage (Python standard library)
+- Gunicorn - Production WSGI server
+- Flask-CORS - Cross-origin resource sharing
 
 ### Frontend
 - React - UI framework
@@ -122,7 +143,6 @@ iniyal/
 - API keys are stored in environment variables, not in the code
 - `.env` file is excluded from version control
 - Sensitive data is not exposed in the frontend
-- Chat history is stored locally
 - CORS is configured to restrict API access
 
 ## Contributing
@@ -137,6 +157,5 @@ This project is open source and available under the MIT License.
 
 ## Notes
 - The application uses OpenAI's GPT-3.5-turbo model for chat and streaming responses
-- Chat history is saved both to a JSON file and a SQLite database for redundancy
-- Make sure to keep your `.env` file secure and never commit it to version control
-- For production deployment, consider using a proper database instead of SQLite 
+- Chat history is stored in memory and will be cleared on server restart
+- Make sure to keep your `.env` file secure and never commit it to version control 
