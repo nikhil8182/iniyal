@@ -5,10 +5,6 @@ import os
 from dotenv import load_dotenv
 import json
 from datetime import datetime
-import sqlalchemy as sa
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 # Load environment variables
 load_dotenv()
@@ -20,33 +16,8 @@ CORS(app)  # Enable CORS for all routes
 # Configure OpenAI
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# Database configuration
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///chat_history.db')
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
-# Create database engine
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-# Define Chat model
-class Chat(Base):
-    __tablename__ = "chats"
-    id = Column(Integer, primary_key=True, index=True)
-    user_message = Column(Text)
-    ai_response = Column(Text)
-    timestamp = Column(DateTime, default=datetime.utcnow)
-
-# Create tables
-Base.metadata.create_all(bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# In-memory storage for chat history
+chat_history = []
 
 @app.route('/')
 def home():
@@ -61,14 +32,6 @@ def chat():
     data = request.json
     user_message = data.get('message', '')
     
-    # Save user message to database
-    db = SessionLocal()
-    chat = Chat(user_message=user_message)
-    db.add(chat)
-    db.commit()
-    chat_id = chat.id
-    db.close()
-
     # Generate AI response
     try:
         response = openai.ChatCompletion.create(
@@ -80,13 +43,12 @@ def chat():
         )
         ai_response = response.choices[0].message.content
 
-        # Update database with AI response
-        db = SessionLocal()
-        chat = db.query(Chat).filter(Chat.id == chat_id).first()
-        if chat:
-            chat.ai_response = ai_response
-            db.commit()
-        db.close()
+        # Store in chat history
+        chat_history.append({
+            "user": user_message,
+            "ai": ai_response,
+            "timestamp": datetime.utcnow().isoformat()
+        })
 
         return jsonify({"response": ai_response})
     except Exception as e:
@@ -118,32 +80,21 @@ def stream():
 
 @app.route('/api/chat_history', methods=['GET'])
 def get_chat_history():
-    db = SessionLocal()
-    chats = db.query(Chat).order_by(Chat.timestamp.desc()).all()
-    history = [{"user": chat.user_message, "ai": chat.ai_response, "timestamp": chat.timestamp.isoformat()} 
-               for chat in chats]
-    db.close()
-    return jsonify(history)
+    return jsonify(chat_history)
 
 @app.route('/api/chat_history', methods=['POST'])
 def save_chat():
     data = request.json
-    db = SessionLocal()
-    chat = Chat(
-        user_message=data.get('user_message', ''),
-        ai_response=data.get('ai_response', '')
-    )
-    db.add(chat)
-    db.commit()
-    db.close()
+    chat_history.append({
+        "user": data.get('user_message', ''),
+        "ai": data.get('ai_response', ''),
+        "timestamp": datetime.utcnow().isoformat()
+    })
     return jsonify({"status": "success"})
 
 @app.route('/api/chat_history/clear', methods=['POST'])
 def clear_chat_history():
-    db = SessionLocal()
-    db.query(Chat).delete()
-    db.commit()
-    db.close()
+    chat_history.clear()
     return jsonify({"status": "success"})
 
 if __name__ == '__main__':
