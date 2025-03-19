@@ -7,7 +7,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -27,9 +26,11 @@ wheels/
 # Virtual Environment
 venv/
 ENV/
+env/
 
 # IDE
 .idea/
 .vscode/
 *.swp
-*.swo 
+*.swo
+.DS_Store 
